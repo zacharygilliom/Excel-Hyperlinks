@@ -12,19 +12,27 @@ ext_order_numbers = ['KLJH', 'AJHYN', 'OPJD']
 # This function helps deal with the different customers' orders.
 # Different customers have different alphabetical notations
 def match_external_order(message, external_numbers):
-    split_message = message.split()
+    base = os.path.basename(message)
+    no_ext_message = os.path.splitext(base)
+    split_message = no_ext_message[0].split()
     for word in split_message:
-        if word[:5] in external_numbers:
-            return word
-        elif word[:4] in external_numbers:
-            return word
-        else:
-            pass
+        for number in external_numbers:
+            if word[:5] == number:
+                return word
+        # if word[:5] in external_numbers:
+            # return word
+            elif word[:4] == number:
+                return word
+            else:
+                pass
 
 
 # for internal order numbers, the main thing we need to worry about is the dropping of the "0"
 def match_internal_order(message):
-    split_message = message.split()
+    base = os.path.basename(message)
+    no_ext_message = os.path.splitext(base)
+    split_message = no_ext_message[0].split()
+    print(split_message)
     for word in split_message:
         if word[:3].lower() == 'ajh' and len(word) < 11:
             if len(word) == 9:
