@@ -6,7 +6,7 @@ import os
 # and the change log.  The path can always be changed.
 Folder_path = os.getcwd()
 
-ext_order_numbers = ['SOTR', 'SOBYN', 'SOMT']
+ext_order_numbers = ['KLJH', 'AJHYN', 'OPJD']
 
 
 # This function helps deal with the different customers' orders.
@@ -26,7 +26,7 @@ def match_external_order(message, external_numbers):
 def match_internal_order(message):
     split_message = message.split()
     for word in split_message:
-        if word[:3].lower() == 'sob' and len(word) < 11:
+        if word[:3].lower() == 'ajh' and len(word) < 11:
             if len(word) == 9:
                 return word
             else:
