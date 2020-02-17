@@ -72,7 +72,7 @@ def listdir(directory):
 dir_values = listdir(Folder_path)
 print(dir_values)
 
-wb = load_workbook(filename='Change log.xlsx')
+wb = load_workbook(filename='Change Log.xlsx')
 sheet = wb.active
 # now we have our excel book open we want to loop through every number in our order number column and match it to
 # one of the values from our directory list
