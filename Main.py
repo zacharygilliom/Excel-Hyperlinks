@@ -1,10 +1,15 @@
 import openpyxl
 from openpyxl import *
 import os
+from pathlib import Path
 
 # Proceeed with the understanding that we will be running the script in the current directory of all the emails
 # and the change log.  The path can always be changed.
-Folder_path = os.getcwd()
+
+# Folder_path = os.getcwd()
+
+Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
+# print(Folder_path)
 
 ext_order_numbers = ['KLJH', 'AJHYN', 'OPJD']
 
@@ -32,7 +37,7 @@ def match_internal_order(message):
     base = os.path.basename(message)
     no_ext_message = os.path.splitext(base)
     split_message = no_ext_message[0].split()
-    print(split_message)
+    # print(split_message)
     for word in split_message:
         if word[:3].lower() == 'ajh' and len(word) < 11:
             if len(word) == 9:
@@ -65,12 +70,13 @@ def listdir(directory):
             else:
                 pass
     # return a list of pairs.  We want both the order number and the location for the link to work in excel
+    print(order_list_location[0])
     result = zip(order_list, order_list_location)
     return list(result)
 
 
 dir_values = listdir(Folder_path)
-print(dir_values)
+# print(dir_values)
 
 wb = load_workbook(filename='Change Log.xlsx')
 sheet = wb.active
