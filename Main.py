@@ -9,7 +9,6 @@ from pathlib import Path
 # Folder_path = os.getcwd()
 
 Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
-# print(Folder_path)
 
 ext_order_numbers = ['KLJH', 'AJHYN', 'OPJD']
 
@@ -37,7 +36,6 @@ def match_internal_order(message):
     base = os.path.basename(message)
     no_ext_message = os.path.splitext(base)
     split_message = no_ext_message[0].split()
-    # print(split_message)
     for word in split_message:
         if word[:3].lower() == 'ajh' and len(word) < 11:
             if len(word) == 9:
@@ -62,14 +60,15 @@ def listdir(directory):
             if match_external_order(filename, ext_order_numbers):
                 order_number = match_external_order(filename, ext_order_numbers)
                 order_list.append(order_number)
-                order_list_location.append(os.path.abspath(filename))
+                order_list_location.append(os.path.abspath(f'files/{filename}'))
             elif match_internal_order(filename):
                 order_number = match_internal_order(filename)
                 order_list.append(order_number)
-                order_list_location.append(os.path.abspath(filename))
+                order_list_location.append(os.path.abspath(f'files/{filename}'))
             else:
                 pass
     # return a list of pairs.  We want both the order number and the location for the link to work in excel
+    print(order_list[0])
     print(order_list_location[0])
     result = zip(order_list, order_list_location)
     return list(result)
