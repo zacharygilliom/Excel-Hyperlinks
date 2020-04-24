@@ -6,9 +6,12 @@ from pathlib import Path
 # Proceeed with the understanding that we will be running the script in the current directory of all the emails
 # and the change log.  The path can always be changed.
 
-# Folder_path = os.getcwd()
-
+# Linux Path
 Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
+
+# Windows Path
+# Folder_path = Path("C:\\Users\\zacha\\Documents\\python-projects\\Excel-Hyperlinks\\files")
+
 
 ext_order_numbers = ['KLJH', 'AJHYN', 'OPJD']
 
