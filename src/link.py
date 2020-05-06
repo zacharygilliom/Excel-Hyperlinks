@@ -7,6 +7,12 @@ from tqdm import tqdm
 
 # Proceeed with the understanding that we will be running the script in the current directory of all the emails
 # and the change log.  The path can always be changed.
+# ----------------------------------------------
+# Windows WSL Path:
+# /home/zach/python-projects/Excel-Hyperlinks/files/'
+# ----------------------------------------------
+# Linux Fedora Path:
+# /home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/'
 
 class emailDirectory:
     
@@ -19,7 +25,7 @@ class emailDirectory:
         # Loop through every file in the directory
         for file in files:
             # Find files that are .msg types and format
-            if file.endswith('.msg'):
+            if file.endswith('.msg') or file.endswith('.pdf'):
                 order_list.append(file)
             else:
                 pass
@@ -30,9 +36,9 @@ class emailDirectory:
         # Loop through the directory and append the paths to the file to a list.
         order_list_location = []
         files = os.listdir(self.directoryPath)
-        pathToDir = '/home/zach/python-projects/Excel-Hyperlinks/files/'
+        pathToDir = '/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/'
         for file in files:
-            if file.endswith('.msg'):
+            if file.endswith('.msg') or file.endswith('.pdf'):
                 order_list_location.append(os.path.join(pathToDir, file))
         return order_list_location
 
@@ -42,6 +48,8 @@ class emailDirectory:
         file_and_path = zip(self.listFiles(), self.listFilePath())
         list_file_and_path = list(file_and_path)
         return list_file_and_path 
+
+
 
 class emailMessage:
      
@@ -54,22 +62,34 @@ class emailMessage:
         # Split the base from the extension type (i.e. separate our the .msg, .pdf, etc...)
         split_base = os.path.splitext(message_base)
         message_no_ext = split_base[0].split()
+        # print(message_no_ext)
         return message_no_ext
 
     def matchInternalOrder(self):
-        # Internal order numbers are always of the type 'ajhxxxxxx'.
-        for word in self.getSplitMessage():
-            # We can't control how the email message will be type out.  This tries to catch the case where people will
-            # type 'ajh xxxxx' or 'ajhxxxxxx'.
-            if word[:3].lower() == 'ajh' and len(word) < 11:
-                # If the len is equal to 9 and starts with 'ajh' then we know that it must have no spaces in it.
-                if len(word) == 9:
-                    return word
+        order_list = self.getSplitMessage()
+        # iterate with index through order list
+        for i, word in enumerate(order_list):
+            # casefold is a string method to ignore case
+            word = str(word).casefold()
+            # if one of the words in the list is equal to ajh, below are all the different variants of how it could be.
+            if word[:3] == 'ajh':
+                if len(word) == 9 and word[3] == '0':
+                    return word[:3] + '0' + word[4:]
+                elif len(word) == 9 and word[3] != '0':
+                    return word[:3] + '0' + word[4:]
+                elif len(word) == 8: 
+                    return word[:3] + '0' + word[3:]
+                elif len(word) == 3:
+                    if len(order_list[i+1]) == 6:
+                        new_word = order_list[i] + order_list[i+1]
+                        return new_word
+                    elif len(order_list[i+1]) == 5:
+                        new_word = order_list[i] + '0' + order_list[i+1]
+                        return new_word
+                    else:
+                        pass
                 else:
-                    # If the length is not nine and is still less than 11 then we know that there is a space, so we need
-                    # to fix that.
-                    new_word = word[:3] + "0" + word[3:]
-                    return new_word
+                    pass
             else:
                 pass
 
@@ -101,16 +121,16 @@ def linkFiles(workbook, direc):
         link_location = dir_value[1]
         currentRow = 2
         for value in sheet.iter_rows(min_row=2, values_only=True):
-            if value[1] == linked_val:
+            if value[1].casefold() == linked_val.casefold():
                 sheet.cell(row=currentRow, column=2).hyperlink = link_location
                 sheet.cell(row=currentRow, column=2).style = 'Hyperlink'
                 currentRow += 1
             else:
                 currentRow += 1
-    workbook.save(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
+    workbook.save(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated5.xlsx')
 
 # Specify the path to the source of our email files to link to our workbook.
-Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
+Folder_path = Path("/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/")
 
 # Speciy the external order numbers that we will match.
 ext_order_numbers = external_order_numbers
@@ -122,7 +142,7 @@ userDirectory = emailDirectory(Folder_path)
 userDirectoryFiles = userDirectory.zipFilesAndPath()
 
 # Open up our workbook specifying the path to it via openpxl method.
-book = load_workbook(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
+book = load_workbook(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
 
 # call function with our open workbook and our directory class.
 linkFiles(workbook=book, direc = userDirectoryFiles)
