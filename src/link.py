@@ -109,25 +109,26 @@ class emailMessage:
 
 def linkFiles(workbook, direc):
     # Activate the sheet in our workbook.
-    sheet = workbook.active
-    # Loop through the directory and create an instance of the emailMessage class.
-    for dir_value in direc:
-        # [0] in dir_value is our order number, [1] is our file location of the file.
-        link_number = emailMessage(dir_value[0])
-        if link_number.matchInternalOrder():
-            linked_val = link_number.matchInternalOrder()
-        elif link_number.matchExternalOrder():
-            linked_val = link_number.matchExternalOrder()
-        link_location = dir_value[1]
-        currentRow = 2
-        for value in sheet.iter_rows(min_row=2, values_only=True):
-            if value[1].casefold() == linked_val.casefold():
-                sheet.cell(row=currentRow, column=2).hyperlink = link_location
-                sheet.cell(row=currentRow, column=2).style = 'Hyperlink'
-                currentRow += 1
-            else:
-                currentRow += 1
-    workbook.save(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated5.xlsx')
+    for sheet in workbook.worksheets:
+        # sheet = workbook.active
+        # Loop through the directory and create an instance of the emailMessage class.
+        for dir_value in direc:
+            # [0] in dir_value is our order number, [1] is our file location of the file.
+            link_number = emailMessage(dir_value[0])
+            if link_number.matchInternalOrder():
+                linked_val = link_number.matchInternalOrder()
+            elif link_number.matchExternalOrder():
+                linked_val = link_number.matchExternalOrder()
+            link_location = dir_value[1]
+            currentRow = 2
+            for value in sheet.iter_rows(min_row=2, values_only=True):
+                if value[1].casefold() == linked_val.casefold():
+                    sheet.cell(row=currentRow, column=2).hyperlink = link_location
+                    sheet.cell(row=currentRow, column=2).style = 'Hyperlink'
+                    currentRow += 1
+                else:
+                    currentRow += 1
+        workbook.save(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
 
 # Specify the path to the source of our email files to link to our workbook.
 Folder_path = Path("/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/")
