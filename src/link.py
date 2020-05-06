@@ -1,4 +1,4 @@
-import openpyxl
+# import openpyxl
 from openpyxl import *
 import os
 from pathlib import Path
@@ -19,7 +19,7 @@ class emailDirectory:
         # Loop through every file in the directory
         for file in files:
             # Find files that are .msg types and format
-            if file.endswith('.msg'):
+            if file.endswith('.msg') or file.endswith('.pdf'):
                 order_list.append(file)
             else:
                 pass
@@ -32,7 +32,7 @@ class emailDirectory:
         files = os.listdir(self.directoryPath)
         pathToDir = '/home/zach/python-projects/Excel-Hyperlinks/files/'
         for file in files:
-            if file.endswith('.msg'):
+            if file.endswith('.msg') or file.endswith('.pdf'):
                 order_list_location.append(os.path.join(pathToDir, file))
         return order_list_location
 
@@ -42,6 +42,8 @@ class emailDirectory:
         file_and_path = zip(self.listFiles(), self.listFilePath())
         list_file_and_path = list(file_and_path)
         return list_file_and_path 
+
+
 
 class emailMessage:
      
@@ -72,7 +74,14 @@ class emailMessage:
                     return new_word
             else:
                 pass
+    def matchInternalOrder(self):
 
+        for word in self.getSplitMessage():
+
+            if word[:3].lower() == 'ajh':
+                if len(word) == 9 or len(word) == 8:
+                    return word[:3] + '0' + word[3:]
+                elif
     def matchExternalOrder(self):
         ext_order_numbers = ['KLJH', 'AJHYN', 'OPJD']
         # External order numbers can have two different lengths, 4 or 5, but they are generally fully type out and on
@@ -106,6 +115,7 @@ def linkFiles(workbook, direc):
                 sheet.cell(row=currentRow, column=2).style = 'Hyperlink'
                 currentRow += 1
             else:
+                print(f'Order Number: {value[1]} Not Found in File Directory')
                 currentRow += 1
     workbook.save(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
 
