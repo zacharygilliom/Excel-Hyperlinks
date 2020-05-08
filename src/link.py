@@ -36,6 +36,8 @@ class emailDirectory:
         # Loop through the directory and append the paths to the file to a list.
         order_list_location = []
         files = os.listdir(self.directoryPath)
+        # Path to network drive shared foloder
+        # pathToDir = '/mnt/c/Shared_Folder/Changes/files/'
         pathToDir = '/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/'
         for file in files:
             if file.endswith('.msg') or file.endswith('.pdf'):
