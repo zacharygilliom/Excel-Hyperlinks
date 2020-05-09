@@ -64,12 +64,17 @@ class emailMessage:
         message_base = os.path.basename(self.file)
         # Split the base from the extension type (i.e. separate our the .msg, .pdf, etc...)
         split_base = os.path.splitext(message_base)
+        # print(f'Split_base = {split_base}')
         message_no_ext = split_base[0].split()
-        # print(message_no_ext)
         return message_no_ext
 
-    def matchInternalOrder(self):
-        order_list = self.getSplitMessage()
+    def splitHyphenatedMessage(self):
+        email_message = self.getSplitMessage()
+        hyphen_message = email_message[0]
+        split_hyphen_message = hyphen_message.split('-')
+        return split_hyphen_message
+
+    def matchInternalOrder(self, order_list):
         # iterate with index through order list
         for i, word in enumerate(order_list):
             # casefold is a string method to ignore case
@@ -90,25 +95,24 @@ class emailMessage:
                         new_word = order_list[i] + '0' + order_list[i+1]
                         return new_word
                     else:
-                        pass
+                        return False
                 else:
-                    pass
+                    return False
             else:
-                pass
+                return False
 
-    def matchExternalOrder(self):
+    def matchExternalOrder(self, order_list):
         ext_order_numbers = self.external_order_numbers
         # External order numbers can have two different lengths, 4 or 5, but they are generally fully type out and on
         # differently typed like they are in internal order numbers.
-        for word in self.getSplitMessage():
+        for word in order_list:
             for number in ext_order_numbers:
                 if word[:5] == number:
                     return word
                 elif word[:4] == number:
                     return word
                 else:
-                    pass
-
+                    return False
 
 def linkFiles(workbook, direc):
     # Activate the sheet in our workbook.
@@ -118,11 +122,18 @@ def linkFiles(workbook, direc):
         for dir_value in direc:
             # [0] in dir_value is our order number, [1] is our file location of the file.
             link_number = emailMessage(dir_value[0], ext_order_numbers)
-            if link_number.matchInternalOrder():
-                linked_val = link_number.matchInternalOrder()
-            elif link_number.matchExternalOrder():
-                linked_val = link_number.matchExternalOrder()
             link_location = dir_value[1]
+            print(link_number.splitHyphenatedMessage())
+            if link_number.matchInternalOrder(link_number.getSplitMessage()):
+                linked_val = link_number.matchInternalOrder(link_number.getSplitMessage())
+            elif link_number.matchExternalOrder(link_number.getSplitMessage()):
+                linked_val = link_number.matchExternalOrder(link_number.getSplitMessage())
+            elif link_number.matchInternalOrder(link_number.splitHyphenatedMessage()):
+                linked_val = link_number.matchInternalOrder(order_list=link_number.splitHyphenatedMessage())   
+            elif link_number.matchExternalOrder(link_number.splitHyphenatedMessage()):
+                linked_val = link_number.matchExternalOrder(order_list=link_number.splitHyphenatedMessage())
+            else:
+                linked_val = ""
             currentRow = 2
             for value in sheet.iter_rows(min_row=2, values_only=True):
                 if sheet.cell(row=currentRow, column=2).hyperlink is None:
@@ -136,15 +147,15 @@ def linkFiles(workbook, direc):
                     currentRow += 1
                     
         # WSL 2 location
-        workbook.save(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
+        # workbook.save(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
         # Fedora Linux location
-        # workbook.save(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
+        workbook.save(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
 
 # Specify the path to the source of our email files to link to our workbook.
 # Fedora Linux path
-# Folder_path = Path("/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/")
+Folder_path = Path("/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/")
 # WSL 2 path
-Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
+#Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
 
 # Speciy the external order numbers that we will match.
 ext_order_numbers = external_order_numbers
@@ -157,9 +168,9 @@ userDirectoryFiles = userDirectory.zipFilesAndPath()
 
 # Open up our workbook specifying the path to it via openpxl method.
 # Fedora Linux path
-# book = load_workbook(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
+book = load_workbook(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
 # WSL 2 path
-book = load_workbook(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
+# book = load_workbook(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
 
 # call function with our open workbook and our directory class.
 linkFiles(workbook=book, direc = userDirectoryFiles)
