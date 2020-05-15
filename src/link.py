@@ -36,9 +36,9 @@ class emailDirectory:
         # Loop through the directory and append the paths to the file to a list.
         order_list_location = []
         files = os.listdir(self.directoryPath)
-        # Path to network drive shared foloder
-        # pathToDir = '/mnt/c/Shared_Folder/Changes/files/'
-        pathToDir = '/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/'
+        # Path to network drive shared folder
+        # pathToDir = '/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/'
+        pathToDir = '/home/zacharygilliom/python-projects/Excel-Hyperlinks/files/'
         for file in files:
             if file.endswith('.msg') or file.endswith('.pdf'):
                 order_list_location.append(os.path.join(pathToDir, file))
@@ -133,12 +133,12 @@ class emailMessage:
                 elif word[:4] == number.casefold():
                     return word
 
-def linkFiles(workbook, direc):
+def linkFiles(workbook, direc, ext_order_numbers):
     # Activate the sheet in our workbook.
     for sheet in workbook.worksheets:
         # sheet = workbook.active
         # Loop through the directory and create an instance of the emailMessage class.
-        for dir_value in direc:
+        for dir_value in tqdm(direc):
             # [0] in dir_value is our order number, [1] is our file location of the file.
             link_number = emailMessage(dir_value[0], ext_order_numbers)
             link_location = dir_value[1]
@@ -161,31 +161,43 @@ def linkFiles(workbook, direc):
                     currentRow += 1
                     
         # WSL 2 location
-        workbook.save(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
-        # Fedora Linux location
+        # workbook.save(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
+        # Fedora Desktop Linux location
         # workbook.save(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
+        # Fedora Laptop Linux location
+        workbook.save(filename='/home/zacharygilliom/python-projects/Excel-Hyperlinks/workbooks/Change Log Updated.xlsx')
 
-# Specify the path to the source of our email files to link to our workbook.
-# Fedora Linux path
-# Folder_path = Path("/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/")
-# WSL 2 path
-Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
+def main():
 
-# Speciy the external order numbers that we will match.
-ext_order_numbers = external_order_numbers
+    # Specify the path to the source of our email files to link to our workbook.
+    # Fedora Desktop Linux path
+    # Folder_path = Path("/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/files/")
+    # WSL 2 path
+    # Folder_path = Path("/home/zach/python-projects/Excel-Hyperlinks/files/")
+    # Fedora Laptop Linux Path
+    Folder_path = Path('/home/zacharygilliom/python-projects/Excel-Hyperlinks/files/')
 
-# Create an instance of our emailDirectory class.
-userDirectory = emailDirectory(Folder_path)
+    # Speciy the external order numbers that we will match.
+    ext_order_numbers = external_order_numbers
 
-# The zipFilesAndPath method will createa a tuple of the order numbers and the path to the file.
-userDirectoryFiles = userDirectory.zipFilesAndPath()
+    # Create an instance of our emailDirectory class.
+    userDirectory = emailDirectory(Folder_path)
 
-# Open up our workbook specifying the path to it via openpxl method.
-# Fedora Linux path
-# book = load_workbook(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
-# WSL 2 path
-book = load_workbook(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
+    # The zipFilesAndPath method will createa a tuple of the order numbers and the path to the file.
+    userDirectoryFiles = userDirectory.zipFilesAndPath()
 
-# call function with our open workbook and our directory class.
-linkFiles(workbook=book, direc = userDirectoryFiles)
+    # Open up our workbook specifying the path to it via openpxl method.
+    # Fedora Desktop Linux path
+    # book = load_workbook(filename='/home/zacharygilliom/Documents/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
+    # WSL 2 path
+    # book = load_workbook(filename='/home/zach/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
+    # Fedora Laptop Linux path
+    book = load_workbook(filename='/home/zacharygilliom/python-projects/Excel-Hyperlinks/workbooks/Change Log.xlsx')
+
+    # call function with our open workbook and our directory class.
+    linkFiles(workbook=book, direc = userDirectoryFiles, ext_order_numbers=ext_order_numbers)
+
+
+if __name__ == "__main__":
+    main()
 
