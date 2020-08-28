@@ -149,6 +149,7 @@ def linkFiles(workbook, direc, ext_order_numbers):
             else:
                 linked_val = ""
             currentRow = 2
+            
             for value in sheet.iter_rows(min_row=2, values_only=True):
                 if sheet.cell(row=currentRow, column=2).hyperlink is None:
                     if value[1].casefold() == linked_val.casefold():
